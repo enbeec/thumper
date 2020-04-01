@@ -1,7 +1,7 @@
 -- lil thumper
 -- moves about the room
 --
--- E1 to rotate
+-- E2 to rotate
 -- K2 to move forward
 -- beware the strange bounces
 --
@@ -88,10 +88,6 @@ end
 
 function enc(n,d)
   if n == 2 then
-    -- player.x = util.clamp(player.x + d,0,15)
-  elseif n == 3 then
-    -- player.y = util.clamp(player.y + d,0,7)
-  elseif n == 1 then
     player:rotate(d)
   end
   screen_dirty = true
