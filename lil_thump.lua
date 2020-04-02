@@ -5,6 +5,7 @@
 -- K2 to jum
 --     with a temp
 --     glitchy animation
+-- K1 hold to toggle grid
 --
 -- beware the strange bounces
 --
@@ -19,9 +20,7 @@ local WORLD_WIDTH = ( 128 / WORLD_SCALE ) - 1
 local WORLD_HEIGHT = ( 64 / WORLD_SCALE ) - 1 
 
 player = include('lib/player')
-local world = {}
-local grid = { lvl = 3 }
-local show_pix_grid,show_debug_draw = true,false
+world = include('lib/world')
 
 function init()
   
@@ -35,6 +34,7 @@ function init()
 	re:start()
 	
 	screen_dirty = true
+  world.show_pix_grid = true
 	
 end
 
@@ -46,11 +46,8 @@ end
 function redraw()
   if screen_dirty == true then
     screen.clear()
-    if show_pix_grid == true then
-      pix_grid(WORLD_SCALE)
-    end
-    if show_debug_draw == true then
-      debug_draw()
+    if world.show_pix_grid == true then
+      world.pix_grid(WORLD_SCALE)
     end
     player:draw()
     screen.update()
@@ -59,38 +56,6 @@ function redraw()
     else
       screen_dirty = false
     end
-  end
-end
-
-function pix_grid(num)
-  if grid == {} then
-    grid.state = true
-    screen.line_width(1)
-  end
-  local xx,yy = 0,0
-  screen.level(grid.lvl)
-  for i = 0,WORLD_HEIGHT do
-    local k = num*i
-    screen.move(xx,yy+k)
-    screen.line(xx+128,yy+k) 
-    screen.stroke()
-    if k >= 64 then break end
-  end
-  for i = 0,WORLD_WIDTH do
-    local k = num*i
-    screen.move(xx+k,yy)
-    screen.line(xx+k,yy+64) 
-    screen.stroke()
-    if k >= 128 then break end
-  end
-end
-
-function debug_draw()
-  screen.level(15)
-  for i = 0,2 do
-    local ii = i * WORLD_SCALE
-    screen.pixel(1*ii,1*ii)
-    screen.fill()
   end
 end
 
@@ -103,5 +68,12 @@ end
 function key(n,z)
   if n == 2 and z == 1 and player.busy == nil then
     player:jump(WORLD_WIDTH,WORLD_HEIGHT)
+  elseif n == 1 and z == 1 then
+    if world.show_pix_grid then
+      world.show_pix_grid = nil
+    else
+      world.show_pix_grid = true
+    end
+    screen_dirty = true
   end
 end
