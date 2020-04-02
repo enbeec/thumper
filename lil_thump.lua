@@ -21,7 +21,7 @@ local WORLD_HEIGHT = ( 64 / WORLD_SCALE ) - 1
 player = include('lib/player')
 local world = {}
 local grid = { lvl = 3 }
-local show_pix_grid,show_debug_draw = false,false
+local show_pix_grid,show_debug_draw = true,false
 
 function init()
   
