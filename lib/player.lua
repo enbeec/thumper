@@ -36,53 +36,72 @@ function player:d_standing()
   screen.pixel(bx-(2*dx),by)
 end
   
-function player:d_jumping(frame)
+function player:d_jumping(frame) -- TODO fix the offsets and everything; code is W R O N G
   local bx = self.x * self.scale-- base is one square of the center four pixels
   local by = self.y * self.scale-- ...corresponding to player.dir
-  local dx = bx + self.dirs[self.dir].x - 4
-  local dy = by + self.dirs[self.dir].y - 4
+  local dx = bx + self.dirs[self.dir].x 
+  local dy = by + self.dirs[self.dir].y
   if frame < 1 or frame > 9 then
     print("i dont have animations for frame -> " .. frame)
   elseif frame == 9 then
     self:d_standing()
-  else
-    -- lookup here
-    -- for now just display a big square in between moving squres
+  elseif frame <= 2 and frame < 6 then
+    
+  -- START STEP
+    screen.level(6)
+    for i = 0,4 do
+      for k = 0,4 do
+        screen.pixel(bx+(dx*i),by+(dy*k))
+      end
+    end
+    
+  elseif frame >= 6 and frame < 9 then
+    
+  -- MIDDLE STEP
     screen.level(3)
     for i = 0,7 do
       for k = 0,7 do
-        screen.pixel(dx+i,dy+k)
+        screen.pixel(dx+i-2,dy+k-2)
       end
     end
+    
+  elseif frame == 9 then
+    
+  -- END STEP
+  
   end
 end
 
 function player:draw()
   if self.busy == "jump" then
-    -- 8 frame animation counter
     if player.ani.counter == -1 then
-    -- initialized to -1
-    -- then set to 1 and incremented every redraw
       player.ani.counter = 1
-      print("jump ani start")
-      -- TODO display first frame
+      -- print("jump ani start")
       self:d_jumping(player.ani.counter)
     elseif player.ani.counter == 8 then
-    -- when it hits 8, it gets stopped,
-    --  player gets marked busy == nil
-    --  and counter goes back to -1
-      print("jump final frame")
-      -- TODO display frame 9 (standing + landing particles)
+      -- print("jump final frame")
       self:d_jumping(player.ani.counter)
       player.ani.counter = -1
       player.busy = nil
     else
       player.ani.counter = player.ani.counter + 1
-      print("jump frame " .. player.ani.counter)
-      -- TODO display frames 2-8
+      -- print("jump frame " .. player.ani.counter)
       self:d_jumping(player.ani.counter)
     end
     --   also screen_dirty gets forced true
+    screen_dirty = "force"
+  elseif self.busy == "turned" then
+    if player.ani.counter == -1 then
+      player.ani.counter = 1
+      -- print("rotate start")
+    elseif player.ani.counter == 4 then
+      -- print("rotate end")
+      player.ani.counter = -1
+      player.busy = nil
+    else
+      player.ani.counter = player.ani.counter + 1
+      -- print("rotate frame " .. player.ani.counter)
+    end
     screen_dirty = "force"
   else -- you are just standing still 
     self:d_standing()
@@ -126,8 +145,9 @@ function player:rotate(d)
       self.dir = util.clamp(self.dir + d,1,4)
     end
     print("facing " .. self.dirs[self.dir].name)
-    screen_dirty = true
   end
+  screen_dirty = true
+  self.busy = "turned"
 end
   
 return player

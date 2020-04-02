@@ -2,9 +2,9 @@
 -- moves about the room
 --
 -- E2 to rotate
--- K2 to jump
+-- K2 to jum
 --     with a temp
---     animation square
+--     glitchy animation
 --
 -- beware the strange bounces
 --
@@ -40,7 +40,7 @@ end
 
 
 function screen_init()
-  screen.aa(0)
+  screen.aa(1)
 end
 
 function redraw()
@@ -95,7 +95,7 @@ function debug_draw()
 end
 
 function enc(n,d)
-  if n == 2 then
+  if n == 2 and player.busy == nil then
     player:rotate(d)
   end
 end
