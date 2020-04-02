@@ -2,10 +2,14 @@
 -- moves about the room
 --
 -- E2 to rotate
--- K2 to move forward
+-- K2 to jump
+--     with a temp
+--     animation square
+--
 -- beware the strange bounces
 --
--- TODO: animation 
+-- TODO: better 
+--        animation 
 --    and K3 to flip
 -- TODO: add rebound on collision
 --    ... that doesnt suck..
@@ -22,7 +26,7 @@ local show_pix_grid,show_debug_draw = false,false
 function init()
   
   re=metro.init()
-	re.time = 1.0/15
+	re.time = 1.0/20
 	re.event = function()
 	  redraw()
 	end
@@ -50,7 +54,11 @@ function redraw()
     end
     player:draw()
     screen.update()
-    screen_dirty = false
+    if screen_dirty == "force" then
+      screen_dirty = true
+    else
+      screen_dirty = false
+    end
   end
 end
 
@@ -90,11 +98,10 @@ function enc(n,d)
   if n == 2 then
     player:rotate(d)
   end
-  screen_dirty = true
 end
 
 function key(n,z)
-  if n == 2 and z == 1 then
-    player:move(WORLD_WIDTH,WORLD_HEIGHT)
+  if n == 2 and z == 1 and player.busy == nil then
+    player:jump(WORLD_WIDTH,WORLD_HEIGHT)
   end
 end
