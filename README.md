@@ -17,3 +17,4 @@ bit of a shambles
 - a flip animation (see the tiny and transparent gif linked here: 
   https://piskel-imgstore-b.appspot.com/img/95f65ab0-748d-11ea-9fe5-f95612220874.gif)
 - a flip is a heavier animation and it will trigger a sound on a tile upon landing
+- move the grid display to a lib/world.lua
