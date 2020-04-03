@@ -25,7 +25,7 @@ world = include('lib/world')
 function init()
   
   re=metro.init()
-	re.time = 1.0/20
+	re.time = 1.0/32
 	re.event = function()
 	  redraw()
 	end
@@ -34,7 +34,6 @@ function init()
 	re:start()
 	
 	screen_dirty = true
-  world.show_pix_grid = true
 	
 end
 
@@ -68,6 +67,8 @@ end
 function key(n,z)
   if n == 2 and z == 1 and player.busy == nil then
     player:jump(WORLD_WIDTH,WORLD_HEIGHT)
+  elseif n == 3 and z == 1 then
+    -- flip
   elseif n == 1 and z == 1 then
     if world.show_pix_grid then
       world.show_pix_grid = nil

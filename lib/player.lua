@@ -37,8 +37,8 @@ function player:d_standing()
 end
   
 function player:d_jumping(frame) -- TODO fix the offsets and everything; code is W R O N G
-  local bx = self.x * self.scale-- base is one square of the center four pixels
-  local by = self.y * self.scale-- ...corresponding to player.dir
+  local bx = self.x * self.scale
+  local by = self.y * self.scale
   local dx = bx + self.dirs[self.dir].x 
   local dy = by + self.dirs[self.dir].y
   if frame < 1 or frame > 9 then
@@ -72,6 +72,9 @@ function player:d_jumping(frame) -- TODO fix the offsets and everything; code is
   end
 end
 
+-- this mostly handles animation
+-- it triggers functions prefixed by "d_"
+-- that do the actual rendering
 function player:draw()
   if self.busy == "jump" then
     if player.ani.counter == -1 then
@@ -103,6 +106,11 @@ function player:draw()
       -- print("rotate frame " .. player.ani.counter)
     end
     screen_dirty = "force"
+  elseif self.busy == "flip" then
+    -- do flip animation
+    self.busy = nil
+    self:d_standing()
+    screen_dirty = true
   else -- you are just standing still 
     self:d_standing()
   end
@@ -111,19 +119,19 @@ function player:draw()
   screen.fill()
 end
 
-function player:jump(width_max,height_max)
+function player:jump(w_max,h_max)
   -- check bottom right collision
-  if self.dir == 1 and ( self.x == width_max or self.y == height_max ) then
+  if self.dir == 1 and ( self.x == w_max or self.y == h_max ) then
     print('blocked to the southeast')
     self:rotate(3)
     -- check bottom left
-  elseif self.dir == 2 and ( self.x == 0 or self.y == height_max ) then
+  elseif self.dir == 2 and ( self.x == 0 or self.y == h_max ) then
     print('blocked to the southwest')
     self:rotate(-1)
   elseif self.dir == 3 and ( self.x == 0 or self.y == 0 ) then
     print('blocked to the northwest')
     self:rotate(-1)
-  elseif self.dir == 4 and (self.x == width_max or self.y == 0 ) then
+  elseif self.dir == 4 and (self.x == w_max or self.y == 0 ) then
     print('blocked to the northeast')
     self:rotate(3)
   else
@@ -134,6 +142,25 @@ function player:jump(width_max,height_max)
     self.busy = "jump"
   end
   screen_dirty = true
+end
+
+function player:flip(w_max,h_max)
+  -- check br col
+  if self.dir == 1 and ( self.x == w_max or self.y == h_max ) then
+    print('blocked to the southeast')
+    -- check bottom left
+  elseif self.dir == 2 and ( self.x == 0 or self.y == h_max ) then
+    print('blocked to the southwest')
+  elseif self.dir == 3 and ( self.x == 0 or self.y == 0 ) then
+    print('blocked to the northwest')
+  elseif self.dir == 4 and (self.x == w_max or self.y == 0 ) then
+    print('blocked to the northeast')
+  else
+    local z = self.dirs[self.dir]
+    self.x = self.x + z.x
+    self.y = self.y + z.y
+    self.busy = "flip"
+  end
 end
 
 function player:rotate(d)
@@ -149,5 +176,5 @@ function player:rotate(d)
   screen_dirty = true
   self.busy = "turned"
 end
-  
+
 return player
